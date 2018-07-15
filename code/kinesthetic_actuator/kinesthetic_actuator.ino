@@ -46,7 +46,11 @@ void setup() {
 }
 
 void loop() {
-//  analogReference(EXTERNAL);
+  Serial.print("(time,actuating_finger,pressure_sensor,servo_degree=(");
+  Serial.print(millis()/1000.0); Serial.print(",");
+  Serial.print(virtual_finger_position_raw); Serial.print(",");
+  Serial.print(pressure_finger_reading); Serial.print(",");
+  Serial.print(virtual_finger_position_mapped); Serial.println(")");
   // put your main code here, to run repeatedly:
 release_finger_position_raw = analogRead(release_finger);
   pressure_finger_reading = analogRead(pressure_finger);
@@ -69,28 +73,28 @@ release_finger_position_raw = analogRead(release_finger);
 
   
 
-//  if(pressure_finger_reading > PRESSURE_FINGER_THREASHOLD)
-//    virtual_finger.write(VIRTUAL_FINGER_MAX);
-//  else {
+  if(pressure_finger_reading > PRESSURE_FINGER_THREASHOLD)
+    virtual_finger.write(VIRTUAL_FINGER_MAX);
+  else {
     virtual_finger_position_raw = analogRead(actuating_finger);
     virtual_finger_position_mapped = map(virtual_finger_position_raw,ACTUATING_FINGER_MIN,ACTUATING_FINGER_MAX,VIRTUAL_FINGER_MIN,VIRTUAL_FINGER_MAX);
 //  Serial.println(virtual_finger_position_raw);
     virtual_finger.write(virtual_finger_position_mapped);
 //  Serial.println(virtual_finger_position_mapped);
-//  }
+  }
 
 //  Serial.println(virtual_finger_position_raw);
-  Serial.println(release_finger_position_raw);
+//  Serial.println(release_finger_position_raw);
 }
 
 void release_tec() {
-  Serial.println("\nReleasing TEC...");
+  Serial.println("Releasing TEC...");
   virtual_finger.write(VIRTUAL_FINGER_MIN);
   pressure_finger_reading=0;
 }
 
 void actuate_tec() {
-  Serial.println("\nActuating TEC...");
+  Serial.println("Actuating TEC (full power cooling to harden)...");
 
   analogWrite(BIN1,0);
   analogWrite(BIN2,255); // cool down
@@ -98,7 +102,7 @@ void actuate_tec() {
 }
 
 void neutralize_tec() {
-  Serial.println("Neutralizing TEC...");
+  Serial.println("Neutralizing TEC (slightly warmed to soften)...");
   analogWrite(BIN1,175); // warm up
   analogWrite(BIN2,0);
 }
